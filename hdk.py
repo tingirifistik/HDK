@@ -92,7 +92,6 @@ def Rez(php, masa , sira, tarih, saat, oto):
                     data = {"islem": "sandalyeMusaitlikGetir", "dosya": "kurumsal/rezervasyon/H_Kat_Salon.jpg", "tarih": tarih, "saat": saat}
                     for i in requests.post(url, headers=headers, cookies=cookies, data=data).json():
                         if i["sandalyeKN_str"] == sandalye:
-                            system("cls||clear")
                             if i["cSaatAcKapa_str"] == "1":
                                 url = "https://kutuphane.uskudar.bel.tr:443/yordam/inc/islem.fm.inc.php"
                                 cookies = {"key": "value", "PHPSESSID": php}
@@ -104,7 +103,7 @@ def Rez(php, masa , sira, tarih, saat, oto):
                                 return 1
                             elif i["cSaatAcKapa_str"] == "0" and oto == 0:
                                 print("Sandalye Dolu!")
-                                sleep(5)
+                                sleep(2.2)
                             else:
                                 return 0
                             break
@@ -139,11 +138,11 @@ def Iptal(php):
     sandalye = bol[1].split("/")[1].strip()
     tarih = bol[2].split("2023")[0] 
     s = int(bol[2].split("2023 - ")[1].split(" - ")[0].split(":")[0])
-    if s <= 6 and s>= 0:
+    if s < 6 and s >= 0:
         saat = ("00:00:00 - 06:00:00")
-    elif s <= 13 and s >= 7:
+    elif s < 13 and s >= 7:
         saat = ("07:00:00 - 13:00:00")
-    elif s <= 19 and s >= 13:
+    elif s < 19 and s >= 13:
         saat = ("13:00:00 - 19:00:00")
     elif s < 24 and s >= 19:
         saat = ("19:00:00 - 23:59:59")
@@ -168,9 +167,12 @@ def Iptal(php):
                             headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/112.0", "Accept": "*/*", "Accept-Language": "tr-TR,tr;q=0.8,en-US;q=0.5,en;q=0.3", "Accept-Encoding": "gzip, deflate", "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8", "X-Requested-With": "XMLHttpRequest", "Origin": "https://kutuphane.uskudar.bel.tr", "Dnt": "1", "Referer": "https://kutuphane.uskudar.bel.tr/yordam/?p=7&dil=0", "Sec-Fetch-Dest": "empty", "Sec-Fetch-Mode": "cors", "Sec-Fetch-Site": "same-origin", "Te": "trailers"}
                             data = {"islem": "rezervasyonIptal", "recordid": i["RECORDID"]}
                             r = requests.post(url, headers=headers, cookies=cookies, data=data)
-                            print(r.text)
-                            input("\n\nMenüye dönmek için 'Enter' tuşuna basınız..")
-                            break
+                            if r.text != "[hata] Farklı üye: 401":
+                                print(r.text)
+                                input("\n\nMenüye dönmek için 'Enter' tuşuna basınız..")
+                                break
+                            else:
+                                pass        
                     break
             break
         
@@ -193,11 +195,13 @@ def RandomSec(php, tarih, saat, oto):
     url = "https://kutuphane.uskudar.bel.tr:443/yordam/inc/islem.fm.inc.php"
     cookies = {"key": "value", "PHPSESSID": php}
     headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/112.0", "Accept": "*/*", "Accept-Language": "tr-TR,tr;q=0.8,en-US;q=0.5,en;q=0.3", "Accept-Encoding": "gzip, deflate", "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8", "X-Requested-With": "XMLHttpRequest", "Origin": "https://kutuphane.uskudar.bel.tr", "Dnt": "1", "Referer": "https://kutuphane.uskudar.bel.tr/yordam/?p=7&dil=0", "Sec-Fetch-Dest": "empty", "Sec-Fetch-Mode": "cors", "Sec-Fetch-Site": "same-origin", "Te": "trailers"}
-    data = {"islem": "odaRezervasyon", "hesKodu": '', "tckno": '', "recordid": choice(bos), "cikis": saat.split(" - "[1]), "tarih": tarih, "kiosk": "0"}
-    r = requests.post(url, headers=headers, cookies=cookies, data=data)
-    print((r.text).replace("<br>", " ").replace("</b>", " "))
-    input("\n\nMenüye dönmek için 'Enter' tuşuna basınız..")
-    return 1
+    while 1:
+        data = {"islem": "odaRezervasyon", "hesKodu": '', "tckno": '', "recordid": choice(bos), "cikis": saat.split(" - "[1]), "tarih": tarih, "kiosk": "0"}
+        r = requests.post(url, headers=headers, cookies=cookies, data=data)
+        if "[hata]" not in r.text:
+            print((r.text).replace("<br>", " ").replace("</b>", " "))
+            input("\n\nMenüye dönmek için 'Enter' tuşuna basınız..")
+            return 1
 
 
 def FakeRez(php, tarih, saat):
@@ -219,7 +223,7 @@ def FakeRez(php, tarih, saat):
     headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/112.0", "Accept": "*/*", "Accept-Language": "tr-TR,tr;q=0.8,en-US;q=0.5,en;q=0.3", "Accept-Encoding": "gzip, deflate", "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8", "X-Requested-With": "XMLHttpRequest", "Origin": "https://kutuphane.uskudar.bel.tr", "Dnt": "1", "Referer": "https://kutuphane.uskudar.bel.tr/yordam/?p=7&dil=0", "Sec-Fetch-Dest": "empty", "Sec-Fetch-Mode": "cors", "Sec-Fetch-Site": "same-origin", "Te": "trailers"}
     data = {"islem": "odaRezervasyon", "hesKodu": '', "tckno": tc, "recordid": choice(bos), "cikis": saat.split(" - "[1]), "tarih": tarih, "kiosk": "0"}
     requests.post(url, headers=headers, cookies=cookies, data=data)
-    print(str(x)+"- Rezervasyon yapıldı - "+tc)
+    print("Rezervasyon yapıldı --> "+tc)
 
 
 while 1:
@@ -229,23 +233,23 @@ while 1:
                 phpsessid = f.read()
         except FileNotFoundError:
             system("cls||clear")
-            print("Herhangi bir işlem yapmadan önce ilk olarak Giriş Yapmalısın!")
+            print("Herhangi bir işlem yapmadan önce giriş yapmalısın!")
             sleep(3)
         system("cls||clear")
         print(r"""
- _   _ ____  _  __
-| | | |  _ \| |/ /
-| |_| | | | | ' / 
-|  _  | |_| | . \ 
-|_| |_|____/|_|\_\
+  _   _ ____  _  __
+ | | | |  _ \| |/ /
+ | |_| | | | | ' / 
+ |  _  | |_| | . \ 
+ |_| |_|____/|_|\_\
                   
-           by tingirifistik
+            by tingirifistik
       """)
         try:
-            print(f"Aktif Rezervasyon: {Mevcut(phpsessid)}\n")
+            print(f" Aktif Rezervasyon: {Mevcut(phpsessid)}\n")
         except NameError:
-            print(f"Aktif Rezervasyon: Bilinmiyor\n")
-        menu = int(input("1- Giriş Yap\n2- Boş Yer Sayısı\n3- Rezervasyonu Iptal Et\n\n4- Rezervasyon Yap\n5- Dolu Yer Boşaldığı An Al\n\n6- Rastgele Rezervasyon Yap\n7- Herhangi Bir Yer Boşaldığı An Al\n\n8- Sahte Rezervasyon Yap\n\n9- Çıkış\n\nSeçim: "))
+            print(f" Aktif Rezervasyon: Bilinmiyor\n")
+        menu = int(input(" 1- Giriş Yap\n 2- Boş Yer Sayısı\n 3- Rezervasyonu Iptal Et\n\n 4- Rezervasyon Yap\n 5- Dolu Yer Boşaldığı An Al\n\n 6- Rastgele Rezervasyon Yap\n 7- Herhangi Bir Yer Boşaldığı An Al\n\n 8- Sahte Rezervasyon Yap\n\n 9- Çıkış\n\n Seçim: "))
         system("cls||clear")
         if menu == 1:
             try:
@@ -284,7 +288,7 @@ while 1:
             while 1:
                 if Rez(phpsessid, masa, sandalte, tarih, saat, 1) == 1:
                     break
-                sleep(12)
+                sleep(6.31)
         elif menu == 3:
             Iptal(phpsessid)
         elif menu == 6:
@@ -306,6 +310,7 @@ while 1:
             while 1:
                 if RandomSec(phpsessid, tarih, saat, 1) == 1:
                     break
+                sleep(6.31)
         elif menu == 8:
             print("Sorulacak soruları parantez içinde verilen örnekteki gibi cevapla! \n(Boşluk karakterlerine dikkat et!)")
             sleep(3.5)
@@ -314,13 +319,12 @@ while 1:
             saat = input("\nRezervasyon Saati (00:00:00 - 06:00:00): ")
             adet = int(input("\nKaç adet rezervasyon yapılsın: "))
             system("cls||clear")
-            x = 1
-            while x < adet+1:
+            x = 0
+            while x < adet:
                 if FakeRez(phpsessid, tarih, saat) == 1:
                     break
                 x+=1
-                sleep(1.5)
-            print(f"Toplam {x} adet sahte rezervasyon yapıldı!")
+            print(f"\nToplam {x} adet sahte rezervasyon yapıldı!")
             input("\n\nMenüye dönmek için 'Enter' tuşuna basınız..")
         elif menu == 9:
             break
